@@ -41,10 +41,24 @@ videosRouter.post("/", (req, res) => {
         });
     }
 
+    if (req.body.title && req.body.title.length > 40) {
+        errorsMessages.push({
+            message: "Title is too long",
+            field: "title"
+        });
+    }
+
     if (!req.body.author) {
         errorsMessages.push({
             message: "No author",
             field: "author"
+        });
+    }
+
+    if (req.body.author && req.body.title.author > 20) {
+        errorsMessages.push({
+            message: "Title is too long",
+            field: "title"
         });
     }
 
@@ -67,6 +81,7 @@ videosRouter.post("/", (req, res) => {
             });
         return;
     }
+
 
     const newVideo = {
         id: videos.length,
@@ -131,6 +146,20 @@ videosRouter.put("/:id", (req, res) => {
         errorsMessages.push({
             message: "No publicationDate",
             field: "publicationDate"
+        });
+    }
+
+    if (req.body.title && req.body.title.length > 40) {
+        errorsMessages.push({
+            message: "Title is too long",
+            field: "title"
+        });
+    }
+
+    if (req.body.author && req.body.title.author > 20) {
+        errorsMessages.push({
+            message: "Title is too long",
+            field: "title"
         });
     }
 
