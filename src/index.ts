@@ -8,7 +8,7 @@ const jsonBodyParser = express.json();
 app.use(jsonBodyParser);
 
 app.use("/hometask_01/api/videos", videosRouter);
-app.use("/ht_01/api/testing", testingRouter);
+app.use("/hometask_01/api/testing", testingRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on ${port}`);
