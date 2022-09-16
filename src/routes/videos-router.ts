@@ -223,6 +223,16 @@ videosRouter.put("/:id", (req, res) => {
         });
     }
 
+    let regExpResult = checkRegExp(req.body.publicationDate, '\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d\\.\\d+([+-][0-2]\\d:[0-5]\\d|Z)');
+
+    if (!regExpResult) {
+        errorsMessages.push({
+            message: "publicationDate incorrect value",
+            field: "publicationDate"
+        });
+    }
+
+    // Final errors check
     if (errorsMessages.length > 0) {
         res.status(400)
             .json({
@@ -257,3 +267,8 @@ videosRouter.delete("/:id", (req, res) => {
 
     res.sendStatus(204);
 });
+
+function checkRegExp(str: string, inputRegExp: string): boolean {
+    const regExp = new RegExp(inputRegExp)
+    return regExp.test(str);
+}
