@@ -41,24 +41,10 @@ videosRouter.post("/", (req, res) => {
         });
     }
 
-    if (req.body.title && req.body.title.length > 40) {
-        errorsMessages.push({
-            message: "Title is too long",
-            field: "title"
-        });
-    }
-
     if (!req.body.author) {
         errorsMessages.push({
             message: "No author",
             field: "author"
-        });
-    }
-
-    if (req.body.author && req.body.title.author > 20) {
-        errorsMessages.push({
-            message: "Title is too long",
-            field: "title"
         });
     }
 
@@ -74,6 +60,28 @@ videosRouter.post("/", (req, res) => {
         });
     }
 
+    // Data length check
+    if (req.body.title && req.body.title.length > 40) {
+        errorsMessages.push({
+            message: "Title is too long",
+            field: "title"
+        });
+    }
+
+    if (req.body.author && req.body.author.length > 20) {
+        errorsMessages.push({
+            message: "Author is too long",
+            field: "author"
+        });
+    }
+
+    if (req.body.availableResolutions && Array.isArray(req.body.availableResolutions) && req.body.availableResolutions.length === 0) {
+        errorsMessages.push({
+            message: "No content in availableResolutions",
+            field: "availableResolutions"
+        });
+    }
+
     if (errorsMessages.length > 0) {
         res.status(400)
             .json({
@@ -82,15 +90,18 @@ videosRouter.post("/", (req, res) => {
         return;
     }
 
+    const createdAtDate = new Date();
+    const publicationDate = createdAtDate;
+    publicationDate.setDate(publicationDate.getDate() + 1);
 
     const newVideo = {
         id: videos.length,
         title: req.body.title,
         author: req.body.author,
-        canBeDownloaded: true,
+        canBeDownloaded: false,
         minAgeRestriction: null,
-        createdAt: (new Date()).toISOString(),
-        publicationDate: (new Date()).toISOString(),
+        createdAt: createdAtDate.toISOString(),
+        publicationDate: publicationDate.toISOString(),
         availableResolutions: req.body.availableResolutions
     }
 
@@ -149,6 +160,7 @@ videosRouter.put("/:id", (req, res) => {
         });
     }
 
+    // Length check
     if (req.body.title && req.body.title.length > 40) {
         errorsMessages.push({
             message: "Title is too long",
@@ -156,10 +168,25 @@ videosRouter.put("/:id", (req, res) => {
         });
     }
 
-    if (req.body.author && req.body.title.author > 20) {
+    if (req.body.author && req.body.author.length > 20) {
+        errorsMessages.push({
+            message: "Author is too long",
+            field: "author"
+        });
+    }
+
+    if (req.body.availableResolutions && Array.isArray(req.body.availableResolutions) && req.body.availableResolutions.length === 0) {
+        errorsMessages.push({
+            message: "No content in availableResolutions",
+            field: "availableResolutions"
+        });
+    }
+
+    // Data type check
+    if (req.body.canBeDownloaded && typeof(req.body.canBeDownloaded) !== "boolean") {
         errorsMessages.push({
             message: "Title is too long",
-            field: "title"
+            field: "canBeDownloaded"
         });
     }
 
