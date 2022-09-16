@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express";
-import {Error} from "../types/types";
+import {availableResolutionsValues, Error} from "../types/types";
 
 export const videosRouter = Router({});
 export let videos = [
@@ -75,12 +75,26 @@ videosRouter.post("/", (req, res) => {
         });
     }
 
+    // Consist data check
     if (req.body.availableResolutions && Array.isArray(req.body.availableResolutions) && req.body.availableResolutions.length === 0) {
         errorsMessages.push({
             message: "No content in availableResolutions",
             field: "availableResolutions"
         });
+    } else {
+        let res;
+        for(let i = 0; i < req.body.availableResolutions.length; i++) {
+            res = availableResolutionsValues.includes(req.body.availableResolutions[i]);
+            if (!res) {
+                errorsMessages.push({
+                    message: "Wrong value",
+                    field: "availableResolutions"
+                });
+            }
+        }
     }
+
+
 
     if (errorsMessages.length > 0) {
         res.status(400)
@@ -90,9 +104,9 @@ videosRouter.post("/", (req, res) => {
         return;
     }
 
-    const createdAtDate = new Date();
-    const publicationDate = createdAtDate;
-    publicationDate.setDate(publicationDate.getDate() + 1);
+    let createdAtDate = new Date();
+    let publicationDate = new Date(createdAtDate.getTime());
+    publicationDate.setDate(createdAtDate.getDate() + 1);
 
     const newVideo = {
         id: videos.length,
@@ -175,11 +189,23 @@ videosRouter.put("/:id", (req, res) => {
         });
     }
 
+    // Consist data check
     if (req.body.availableResolutions && Array.isArray(req.body.availableResolutions) && req.body.availableResolutions.length === 0) {
         errorsMessages.push({
             message: "No content in availableResolutions",
             field: "availableResolutions"
         });
+    } else {
+        let res;
+        for(let i = 0; i < req.body.availableResolutions.length; i++) {
+            res = availableResolutionsValues.includes(req.body.availableResolutions[i]);
+            if (!res) {
+                errorsMessages.push({
+                    message: "Wrong value",
+                    field: "availableResolutions"
+                });
+            }
+        }
     }
 
     // Data type check
@@ -187,6 +213,13 @@ videosRouter.put("/:id", (req, res) => {
         errorsMessages.push({
             message: "Title is too long",
             field: "canBeDownloaded"
+        });
+    }
+
+    if (req.body.minAgeRestriction && (req.body.minAgeRestriction > 18 || req.body.minAgeRestriction < 1)) {
+        errorsMessages.push({
+            message: "minAgeRestriction incorrect value",
+            field: "minAgeRestriction"
         });
     }
 
